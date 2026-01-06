@@ -79,7 +79,7 @@ function useIsMobile() {
 /* MAIN EXPORT */
 /* ---------------------------------- */
 
-export default function AstraRailScroll() {
+export default function HeroCards() {
   const isMobile = useIsMobile()
   return isMobile ? <MobileSlider /> : <DesktopRail />
 }
