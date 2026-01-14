@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import emailjs from "@emailjs/browser"
 import { Mail, Phone, MapPin, Clock, CheckCircle } from "lucide-react";
 
 /* ================= SECTION FLAG BACKGROUNDS ================= */
@@ -100,11 +101,41 @@ export function Contact() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-    setShowPopup(true);
-  };
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
+  if (!validateForm()) return
+
+  try {
+    await emailjs.send(
+      "service_waok3bn",       // 🔁 replace
+      "template_1uati2w",      // 🔁 replace
+      {
+        name: formData.name,
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+        location: location === "london" ? "London (UK)" : "India",
+      },
+      "DDPvkLGHvnZLx2nrJ"        // 🔁 replace
+    )
+      alert("✅ Your message has been sent successfully!")
+
+    setFormData({
+      name: "",
+      email: "",
+      subject: "",
+      message: "",
+    })
+
+    setErrors({})
+    setShowPopup(true)
+
+  } catch (error) {
+    console.error("Email failed:", error)
+    alert("Something went wrong. Please try again.")
+  }
+}
+
 
   return (
     <section
@@ -239,9 +270,29 @@ export function Contact() {
                       Your information is safe and will never be shared.
                     </div>
 
-                    <Button className="w-full md:w-auto bg-[#ff6a3d] text-white rounded-full px-12 h-14 transition-all duration-300 hover:bg-[#2563eb] hover:shadow-[0_0_25px_rgba(37,99,235,0.45)]">
-                      Get in touch →
-                    </Button>
+                    {/* SUBMIT → EMAIL SEND */}
+                   {/* ACTION BUTTONS */}
+<div className="flex flex-col sm:flex-row justify-between gap-4 pt-4">
+  
+  {/* LEFT → GET IN TOUCH (POPUP ONLY) */}
+  <Button
+    type="button"
+    onClick={() => setShowPopup(true)}
+    className="w-full sm:w-auto bg-[#ff6a3d] text-white rounded-full px-12 h-14 transition-all duration-300 hover:bg-[#2563eb] hover:shadow-[0_0_25px_rgba(37,99,235,0.45)]"
+  >
+    Get in touch →
+  </Button>
+
+  {/* RIGHT → SUBMIT (EMAILJS) */}
+  <Button
+    type="submit"
+    className="w-full sm:w-auto bg-[#1a1446] text-white rounded-full px-12 h-14 transition-all duration-300 hover:bg-[#241b6a] hover:shadow-[0_0_25px_rgba(26,20,70,0.45)]"
+  >
+    Submit
+  </Button>
+
+</div>
+
                   </form>
                 </CardContent>
               </div>
